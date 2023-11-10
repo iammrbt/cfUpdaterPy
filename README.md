@@ -24,7 +24,7 @@ Before running the script, ensure you have the following Cloudflare account deta
 - Record Name and Record Type you wish to update
 
 ## Usage
-1. Run the script using Python: `python cf_dns_updater.py`.
+1. Run the script using Python: `python cfUpdater.py`.
 2. Enter your Cloudflare API Key, Email, Zone ID, Record Name, and Record Type in the respective fields in the GUI.
 3. The script will display your current public IP. If you want to update the specified DNS record to this IP, click on the "Update DNS Record" button.
 4. Results of the operation will be displayed in the GUI.
