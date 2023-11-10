@@ -76,7 +76,7 @@ def get_dns_record_id(api_key, email, zone_id, record_name, record_type):
         messagebox.showerror("Error", f"API request failed: {e}")
         return None
 
-def check_dns_record(api_key, email, zone_id, record_name, record_type, current_ip):
+def check_dns_record(api_key, email, zone_id, record_name, record_type):
     headers = {
         "X-Auth-Email": email,
         "X-Auth-Key": api_key,
@@ -85,9 +85,10 @@ def check_dns_record(api_key, email, zone_id, record_name, record_type, current_
     response = requests.get(f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records?type={record_type}&name={record_name}", headers=headers)
     if response.status_code == 200:
         records = response.json()["result"]
-        if records and records[0]['content'] == current_ip:
-            return True
-    return False
+        if records:
+            return records[0]['content']  # Return the IP address of the DNS record
+    return None
+
 
 def update_dns_record():
     api_key = api_key_entry.get()
@@ -99,9 +100,15 @@ def update_dns_record():
 
     for record_name in record_names:
         record_name = record_name.strip()  # Removing leading/trailing whitespace
-        if check_dns_record(api_key, email, zone_id, record_name, record_type, content):
-            result_text.insert(tk.END, f"Info: DNS record for {record_name} already matches the current IP.\n")
+        dns_record_ip = check_dns_record(api_key, email, zone_id, record_name, record_type)
+        
+        if dns_record_ip == content:
+            result_text.insert(tk.END, f"Info: The IP address already matches the A record for {record_name}.\n")
             continue
+        elif dns_record_ip is None:
+            result_text.insert(tk.END, f"Error: Could not retrieve the DNS record for {record_name}.\n")
+            continue
+
         record_id = get_dns_record_id(api_key, email, zone_id, record_name, record_type)
         if not record_id:
             continue
@@ -123,11 +130,12 @@ def update_dns_record():
         try:
             response = requests.put(f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{record_id}", json=data, headers=headers)
             if response.status_code == 200:
-                result_text.insert(tk.END, f"Success: DNS record for {record_name} updated successfully\n")
+                result_text.insert(tk.END, f"Success: DNS record for {record_name} updated successfully.\n")
             else:
                 result_text.insert(tk.END, f"Error: Failed to update DNS record for {record_name}: {response.text}\n")
         except requests.RequestException as e:
             result_text.insert(tk.END, f"API request failed for {record_name}: {e}\n")
+
 
 def auto_update():
     global auto_update_flag
@@ -135,9 +143,11 @@ def auto_update():
     interval = float(interval_entry.get()) * 60  # Convert minutes to seconds
     while auto_update_flag:
         current_ip = get_public_ip()
-        if current_ip != ip_label.cget("text"):
-            ip_label.config(text=current_ip)
-            update_dns_record()
+        for record_name in record_name_entry.get().split(","):
+            record_name = record_name.strip()
+            dns_record_ip = check_dns_record(api_key_entry.get(), email_entry.get(), zone_id_entry.get(), record_name, record_type_entry.get())
+            if current_ip != dns_record_ip:
+                update_dns_record()
         time.sleep(interval)
 
 def stop_auto_update():
