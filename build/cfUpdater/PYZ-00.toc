@@ -53,6 +53,7 @@
    'C:\\Users\\btaylor\\OneDrive - True '
    'Blue\\Documents\\Code\\Python\\cfUpdater\\venvcfUpdater\\lib\\site-packages\\charset_normalizer\\version.py',
    'PYMODULE'),
+  ('configparser', 'C:\\Python310\\lib\\configparser.py', 'PYMODULE'),
   ('contextlib', 'C:\\Python310\\lib\\contextlib.py', 'PYMODULE'),
   ('contextvars', 'C:\\Python310\\lib\\contextvars.py', 'PYMODULE'),
   ('copy', 'C:\\Python310\\lib\\copy.py', 'PYMODULE'),

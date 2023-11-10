@@ -3,6 +3,8 @@ import tkinter as tk
 from tkinter import messagebox
 import threading
 import time
+import configparser
+
 
 auto_update_flag = False
 
@@ -12,6 +14,44 @@ def get_public_ip():
     except requests.RequestException as e:
         messagebox.showerror("Error", f"Failed to get public IP: {e}")
         return None
+
+# Save and Load config file
+def save_config():
+    config = configparser.ConfigParser()
+    config['DEFAULT'] = {
+        'ApiKey': api_key_entry.get(),
+        'Email': email_entry.get(),
+        'ZoneId': zone_id_entry.get(),
+        'RecordNames': record_name_entry.get(),
+        'RecordType': record_type_entry.get(),
+        'Interval': interval_entry.get()
+    }
+    with open('config.ini', 'w') as configfile:
+        config.write(configfile)
+    messagebox.showinfo("Info", "Configuration saved successfully.")
+
+def load_config():
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    if 'DEFAULT' in config:
+        api_key_entry.delete(0, tk.END)
+        api_key_entry.insert(0, config['DEFAULT'].get('ApiKey', ''))
+
+        email_entry.delete(0, tk.END)
+        email_entry.insert(0, config['DEFAULT'].get('Email', ''))
+
+        zone_id_entry.delete(0, tk.END)
+        zone_id_entry.insert(0, config['DEFAULT'].get('ZoneId', ''))
+
+        record_name_entry.delete(0, tk.END)
+        record_name_entry.insert(0, config['DEFAULT'].get('RecordNames', ''))
+
+        record_type_entry.delete(0, tk.END)
+        record_type_entry.insert(0, config['DEFAULT'].get('RecordType', ''))
+
+        interval_entry.delete(0, tk.END)
+        interval_entry.insert(0, config['DEFAULT'].get('Interval', ''))
+        messagebox.showinfo("Info", "Configuration loaded successfully.")
 
 def get_dns_record_id(api_key, email, zone_id, record_name, record_type):
     headers = {
@@ -112,6 +152,13 @@ root.title("DNS Updater")
 tk.Label(root, text="Your Public IP:").pack()
 ip_label = tk.Label(root, text=get_public_ip())
 ip_label.pack()
+
+# Save and Load Buttons
+save_config_button = tk.Button(root, text="Save Config", command=save_config)
+save_config_button.pack()
+
+load_config_button = tk.Button(root, text="Load Config", command=load_config)
+load_config_button.pack()
 
 # Input Fields with Labels
 tk.Label(root, text="API Key:").pack()
