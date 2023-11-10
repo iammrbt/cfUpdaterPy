@@ -9,6 +9,29 @@ def get_public_ip():
         messagebox.showerror("Error", f"Failed to get public IP: {e}")
         return None
 
+def get_dns_record_id(api_key, email, zone_id, record_name, record_type):
+    headers = {
+        "X-Auth-Email": email,
+        "X-Auth-Key": api_key,
+        "Content-Type": "application/json"
+    }
+
+    try:
+        response = requests.get(f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records?type={record_type}&name={record_name}", headers=headers)
+        if response.status_code == 200:
+            records = response.json()["result"]
+            if records:
+                return records[0]["id"]
+            else:
+                messagebox.showinfo("Info", "No matching DNS record found")
+                return None
+        else:
+            messagebox.showerror("Error", f"Failed to fetch DNS records: {response.text}")
+            return None
+    except requests.RequestException as e:
+        messagebox.showerror("Error", f"API request failed: {e}")
+        return None
+
 def update_dns_record():
     api_key = api_key_entry.get()
     email = email_entry.get()
@@ -16,6 +39,10 @@ def update_dns_record():
     record_name = record_name_entry.get()
     record_type = record_type_entry.get()
     content = ip_label.cget("text")
+
+    record_id = get_dns_record_id(api_key, email, zone_id, record_name, record_type)
+    if not record_id:
+        return
 
     headers = {
         "X-Auth-Email": email,
@@ -39,7 +66,6 @@ def update_dns_record():
             result_text.insert(tk.END, f"Error: Failed to update DNS record: {response.text}\n")
     except requests.RequestException as e:
         result_text.insert(tk.END, f"API request failed: {e}\n")
-
 # GUI Setup
 root = tk.Tk()
 root.title("DNS Updater")
