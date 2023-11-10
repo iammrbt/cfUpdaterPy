@@ -4,6 +4,7 @@ from tkinter import messagebox
 import threading
 import time
 import configparser
+import os
 
 
 auto_update_flag = False
@@ -142,13 +143,27 @@ def auto_update():
     auto_update_flag = True
     interval = float(interval_entry.get()) * 60  # Convert minutes to seconds
     while auto_update_flag:
-        current_ip = get_public_ip()
-        for record_name in record_name_entry.get().split(","):
-            record_name = record_name.strip()
-            dns_record_ip = check_dns_record(api_key_entry.get(), email_entry.get(), zone_id_entry.get(), record_name, record_type_entry.get())
-            if current_ip != dns_record_ip:
-                update_dns_record()
-        time.sleep(interval)
+        for remaining in range(int(interval), 0, -1):
+            mins, secs = divmod(remaining, 60)
+            countdown_label.config(text=f"Next check in: {mins:02d}:{secs:02d}")
+            root.update()
+            time.sleep(1)
+            if not auto_update_flag:
+                break
+
+        if auto_update_flag:
+            current_ip = get_public_ip()
+            update_performed = False
+            for record_name in record_name_entry.get().split(","):
+                record_name = record_name.strip()
+                dns_record_ip = check_dns_record(api_key_entry.get(), email_entry.get(), zone_id_entry.get(), record_name, record_type_entry.get())
+                if current_ip != dns_record_ip:
+                    update_dns_record()
+                    update_performed = True
+            if not update_performed:
+                result_text.insert(tk.END, f"No update necessary at {time.strftime('%Y-%m-%d %H:%M:%S')}.\n")
+        countdown_label.config(text="Update check completed.")
+
 
 def stop_auto_update():
     global auto_update_flag
@@ -210,5 +225,17 @@ stop_auto_update_button.pack()
 # Result Text Widget
 result_text = tk.Text(root, height=5, width=50)
 result_text.pack()
+
+# Countdown timer
+countdown_label = tk.Label(root, text="Next check in: --:--")
+countdown_label.pack()
+
+def start_auto_update_thread():
+    threading.Thread(target=auto_update, daemon=True).start()
+
+# Check for config.ini and load if exists
+if os.path.exists('config.ini'):
+    load_config()
+    start_auto_update_thread()
 
 root.mainloop()
