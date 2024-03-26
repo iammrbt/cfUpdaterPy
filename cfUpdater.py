@@ -52,7 +52,7 @@ def load_config():
 
         interval_entry.delete(0, tk.END)
         interval_entry.insert(0, config['DEFAULT'].get('Interval', ''))
-        messagebox.showinfo("Info", "Configuration loaded successfully.")
+
 
 def get_dns_record_id(api_key, email, zone_id, record_name, record_type):
     headers = {
@@ -141,7 +141,7 @@ def update_dns_record():
 def auto_update():
     global auto_update_flag
     auto_update_flag = True
-    interval = float(interval_entry.get()) * 60  # Convert minutes to seconds
+    interval = 60  # Set interval directly to 60 seconds (1 minute)
     while auto_update_flag:
         for remaining in range(int(interval), 0, -1):
             mins, secs = divmod(remaining, 60)
@@ -153,6 +153,7 @@ def auto_update():
 
         if auto_update_flag:
             current_ip = get_public_ip()
+            ip_label.config(text=current_ip)  # Update the IP label with the current IP
             update_performed = False
             for record_name in record_name_entry.get().split(","):
                 record_name = record_name.strip()
