@@ -141,7 +141,7 @@ def update_dns_record():
 def auto_update():
     global auto_update_flag
     auto_update_flag = True
-    interval = 60  # Set interval directly to 60 seconds (1 minute)
+    interval = float(interval_entry.get()) * 60  # Convert minutes to seconds
     while auto_update_flag:
         for remaining in range(int(interval), 0, -1):
             mins, secs = divmod(remaining, 60)
