@@ -15,6 +15,7 @@ This Python script provides a graphical user interface (GUI) to update DNS recor
 ## Setup
 1. Clone or download this repository to your local machine.
 2. Install the required Python packages: `pip install requests`.
+3. For linux users, run `sudo apt install python3-tk`. 
 
 ## Configuration
 Before running the script, ensure you have the following Cloudflare account details:
