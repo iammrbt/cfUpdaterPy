@@ -1,19 +1,19 @@
-<<<<<<< HEAD
-# Python
+# Python build artifacts
 __pycache__/
 *.py[cod]
+*$py.class
 build/
-dist/
 *.spec
 
-# Config files
+# Application specific
 config.ini
-
-# Logs
 *.log
 
-# IDE
+# IDE settings
 .vscode/
-=======
-config.ini
->>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4
+.idea/
+*.pyc
+
+# OS specific
+.DS_Store
+Thumbs.db

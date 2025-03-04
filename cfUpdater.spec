@@ -12,10 +12,7 @@ a = Analysis(
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
-<<<<<<< HEAD
     optimize=0,
-=======
->>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4
 )
 pyz = PYZ(a.pure)
 
@@ -32,11 +29,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-<<<<<<< HEAD
     console=False,
-=======
-    console=True,
->>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
