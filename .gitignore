@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Python
 __pycache__/
 *.py[cod]
@@ -13,3 +14,6 @@ config.ini
 
 # IDE
 .vscode/
+=======
+config.ini
+>>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4

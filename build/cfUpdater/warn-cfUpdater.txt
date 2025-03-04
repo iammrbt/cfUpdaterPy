@@ -14,6 +14,7 @@ Types if import:
 IMPORTANT: Do NOT post this list to the issue-tracker. Use it as a basis for
             tracking down the missing module yourself. Thanks!
 
+<<<<<<< HEAD
 missing module named grp - imported by shutil (delayed, optional), tarfile (optional), pathlib (delayed, optional), subprocess (delayed, conditional, optional)
 missing module named pwd - imported by posixpath (delayed, conditional, optional), shutil (delayed, optional), tarfile (optional), pathlib (delayed, optional), subprocess (delayed, conditional, optional), netrc (delayed, conditional), getpass (delayed)
 missing module named _frozen_importlib_external - imported by importlib._bootstrap (delayed), importlib (optional), importlib.abc (optional)
@@ -22,11 +23,24 @@ missing module named posix - imported by os (conditional, optional), shutil (con
 missing module named resource - imported by posix (top-level)
 missing module named collections.Callable - imported by collections (optional), socks (optional)
 missing module named _posixsubprocess - imported by subprocess (conditional)
+=======
+missing module named 'org.python' - imported by copy (optional)
+missing module named org - imported by pickle (optional)
+missing module named pwd - imported by posixpath (delayed, conditional), subprocess (delayed, conditional, optional), shutil (delayed, optional), tarfile (optional), pathlib (delayed, optional), netrc (delayed, conditional), getpass (delayed)
+missing module named grp - imported by subprocess (delayed, conditional, optional), shutil (delayed, optional), tarfile (optional), pathlib (delayed, optional)
+missing module named posix - imported by os (conditional, optional), shutil (conditional), importlib._bootstrap_external (conditional)
+missing module named resource - imported by posix (top-level)
+missing module named pep517 - imported by importlib.metadata (delayed)
+missing module named _frozen_importlib_external - imported by importlib._bootstrap (delayed), importlib (optional), importlib.abc (optional)
+excluded module named _frozen_importlib - imported by importlib (optional), importlib.abc (optional)
+missing module named _posixsubprocess - imported by subprocess (optional)
+>>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4
 missing module named fcntl - imported by subprocess (optional)
 missing module named _scproxy - imported by urllib.request (conditional)
 missing module named termios - imported by getpass (optional)
 missing module named simplejson - imported by requests.compat (conditional, optional)
 missing module named dummy_threading - imported by requests.cookies (optional)
+<<<<<<< HEAD
 missing module named zstandard.backend_rust - imported by zstandard (conditional)
 missing module named vms_lib - imported by platform (delayed, optional)
 missing module named 'java.lang' - imported by platform (delayed, optional)
@@ -39,3 +53,17 @@ missing module named 'OpenSSL.crypto' - imported by urllib3.contrib.pyopenssl (d
 missing module named OpenSSL - imported by urllib3.contrib.pyopenssl (top-level)
 missing module named chardet - imported by requests.compat (optional), requests (optional), requests.packages (optional)
 missing module named unicodedata2 - imported by charset_normalizer.utils (optional)
+=======
+missing module named typing_extensions - imported by urllib3.connection (conditional), urllib3.util.timeout (conditional), urllib3._base_connection (conditional), urllib3.util.request (conditional), urllib3._collections (conditional), urllib3.util.ssl_ (conditional), urllib3.util.ssltransport (conditional), urllib3.connectionpool (conditional), urllib3.response (conditional), urllib3.poolmanager (conditional)
+missing module named zstandard - imported by urllib3.response (optional), urllib3.util.request (optional)
+missing module named brotli - imported by urllib3.response (optional), urllib3.util.request (optional)
+missing module named brotlicffi - imported by urllib3.response (optional), urllib3.util.request (optional)
+missing module named socks - imported by urllib3.contrib.socks (optional)
+missing module named 'typing.io' - imported by importlib.resources (top-level)
+missing module named cryptography - imported by urllib3.contrib.pyopenssl (top-level), requests (conditional, optional)
+missing module named 'OpenSSL.crypto' - imported by urllib3.contrib.pyopenssl (delayed, conditional)
+missing module named 'cryptography.x509' - imported by urllib3.contrib.pyopenssl (delayed, optional)
+missing module named OpenSSL - imported by urllib3.contrib.pyopenssl (top-level)
+missing module named chardet - imported by requests.compat (optional), requests (optional), requests.packages (optional)
+missing module named urllib3_secure_extra - imported by urllib3 (optional)
+>>>>>>> 9ddd53d3262b2947f845068ea0d1273a4ec59dd4
