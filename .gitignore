@@ -1,3 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+*.spec
+
+# Config files
 config.ini
+
+# Logs
 *.log
+
+# IDE
+.vscode/
 venvcfUpdaater/
