@@ -1,8 +1,8 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
 build/
+dist/
 *.spec
 
 # Config files
@@ -13,4 +13,3 @@ config.ini
 
 # IDE
 .vscode/
-venvcfUpdaater/
