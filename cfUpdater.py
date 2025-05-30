@@ -183,12 +183,24 @@ def update_dns_record_for_domain(api_key: str, email: str, zone_id: str, record_
         "Content-Type": "application/json"
     }
 
+    # Fetch existing DNS record to preserve proxied setting
+    try:
+        resp = requests.get(
+            f"https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_records/{record_id}",
+            headers=headers, timeout=10
+        )
+        resp.raise_for_status()
+        existing = resp.json().get("result", {})
+        proxied_flag = existing.get("proxied", False)
+    except requests.exceptions.RequestException:
+        proxied_flag = False
+
     data = {
         "type": record_type,
         "name": record_name,
         "content": ip,
         "ttl": 1,  # Automatic TTL
-        "proxied": False  # Adjust as needed
+        "proxied": proxied_flag
     }
 
     try:
