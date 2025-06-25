@@ -33,6 +33,18 @@ def get_public_ip() -> str | None:
         logging.error(f"Request timed out: {e}")
         return None
 
+def get_cloudflare_status() -> str:
+    """Fetches the current status of Cloudflare services."""
+    try:
+        resp = requests.get(
+            "https://www.cloudflarestatus.com/api/v2/status.json", timeout=10
+        )
+        resp.raise_for_status()
+        return resp.json().get("status", {}).get("description", "Unknown")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"Failed to get Cloudflare status: {e}")
+        return "Unknown"
+
 # Save and load configuration
 def save_config():
     """Saves the user's configuration to a file."""
@@ -349,72 +361,84 @@ def toggle_api_key_visibility():
         api_key_entry.config(show="*")
         toggle_api_key_button.config(text="Show API Key")
 
+def refresh_cloudflare_status():
+    """Refreshes the Cloudflare status label."""
+    status = get_cloudflare_status()
+    cf_status_label.config(text=f"Cloudflare Status: {status}")
+
 # --- GUI Setup ---
 root = tk.Tk()
 root.title("DNS Updater")
 
 # Use ttk for a more modern look
 style = ttk.Style()
-style.theme_use("clam")  # You can choose other themes like "default", "alt", "classic"
+style.theme_use("clam")
 
-# Display Public IP
-ttk.Label(root, text="Your Public IP:").pack(pady=5)
-ip_label = ttk.Label(root, text=get_public_ip())
-ip_label.pack()
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
 
-# Save and Load Buttons
-save_config_button = ttk.Button(root, text="Save Config", command=save_config)
-save_config_button.pack(pady=2)
+main_frame = ttk.Frame(root, padding=10)
+main_frame.grid(row=0, column=0, sticky="NSEW")
+main_frame.columnconfigure(1, weight=1)
 
-load_config_button = ttk.Button(root, text="Load Config", command=load_config)
-load_config_button.pack(pady=2)
+cf_status_label = ttk.Label(main_frame, text="Cloudflare Status: Loading...")
+cf_status_label.grid(row=0, column=0, columnspan=3, sticky="w")
+refresh_status = ttk.Button(main_frame, text="Refresh Status", command=refresh_cloudflare_status)
+refresh_status.grid(row=0, column=3, sticky="e")
 
-# Input Fields with clear directions
-ttk.Label(root, text="API Key:").pack()
-api_key_entry = ttk.Entry(root, width=50, show="*")  # Add show="*" parameter
-api_key_entry.pack()
-toggle_api_key_button = ttk.Button(root, text="Show API Key", command=toggle_api_key_visibility)
-toggle_api_key_button.pack(pady=2)
+ttk.Label(main_frame, text="Your Public IP:").grid(row=1, column=0, sticky="w", pady=(10,0))
+ip_label = ttk.Label(main_frame, text=get_public_ip())
+ip_label.grid(row=1, column=1, columnspan=3, sticky="w", pady=(10,0))
 
-ttk.Label(root, text="Email:").pack()
-email_entry = ttk.Entry(root, width=50)
-email_entry.pack()
+save_config_button = ttk.Button(main_frame, text="Save Config", command=save_config)
+save_config_button.grid(row=2, column=0, sticky="w", pady=2)
 
-ttk.Label(root, text="Zone ID(s): (For multiple domains, separate by commas)").pack()
-zone_id_entry = ttk.Entry(root, width=50)
-zone_id_entry.pack()
+load_config_button = ttk.Button(main_frame, text="Load Config", command=load_config)
+load_config_button.grid(row=2, column=1, sticky="w", pady=2)
 
-ttk.Label(root, text="Record Name(s): (For multiple domains, separate by commas)").pack()
-record_name_entry = ttk.Entry(root, width=50)
-record_name_entry.pack()
+ttk.Label(main_frame, text="API Key:").grid(row=3, column=0, sticky="w")
+api_key_entry = ttk.Entry(main_frame, width=50, show="*")
+api_key_entry.grid(row=3, column=1, columnspan=2, sticky="ew")
+toggle_api_key_button = ttk.Button(main_frame, text="Show API Key", command=toggle_api_key_visibility)
+toggle_api_key_button.grid(row=3, column=3, padx=5)
 
-ttk.Label(root, text="Record Type:").pack()
-record_type_entry = ttk.Entry(root, width=50)
-record_type_entry.pack()
+ttk.Label(main_frame, text="Email:").grid(row=4, column=0, sticky="w")
+email_entry = ttk.Entry(main_frame, width=50)
+email_entry.grid(row=4, column=1, columnspan=3, sticky="ew")
 
-ttk.Label(root, text="Update Interval (minutes):").pack()
-interval_entry = ttk.Entry(root, width=20)
-interval_entry.pack()
+ttk.Label(main_frame, text="Zone ID(s): (For multiple domains, separate by commas)").grid(row=5, column=0, sticky="w")
+zone_id_entry = ttk.Entry(main_frame, width=50)
+zone_id_entry.grid(row=5, column=1, columnspan=3, sticky="ew")
 
-# Buttons for manual and automatic updates
-update_button = ttk.Button(root, text="Manual Update", command=manual_update)
-update_button.pack(pady=5)
+ttk.Label(main_frame, text="Record Name(s): (For multiple domains, separate by commas)").grid(row=6, column=0, sticky="w")
+record_name_entry = ttk.Entry(main_frame, width=50)
+record_name_entry.grid(row=6, column=1, columnspan=3, sticky="ew")
 
-start_button = ttk.Button(root, text="Start Auto Update", command=start_auto_update)
-start_button.pack(pady=5)
+ttk.Label(main_frame, text="Record Type:").grid(row=7, column=0, sticky="w")
+record_type_entry = ttk.Entry(main_frame, width=50)
+record_type_entry.grid(row=7, column=1, columnspan=3, sticky="ew")
 
-stop_button = ttk.Button(root, text="Stop Auto Update", command=stop_auto_update)
-stop_button.pack(pady=5)
+ttk.Label(main_frame, text="Update Interval (minutes):").grid(row=8, column=0, sticky="w")
+interval_entry = ttk.Entry(main_frame, width=20)
+interval_entry.grid(row=8, column=1, sticky="w")
 
-# Countdown label for auto update
-countdown_label = ttk.Label(root, text="Auto update stopped.")
-countdown_label.pack(pady=5)
+update_button = ttk.Button(main_frame, text="Manual Update", command=manual_update)
+update_button.grid(row=9, column=0, pady=5, sticky="w")
 
-# Result text box
-result_text = tk.Text(root, height=10, width=80)
-result_text.pack(pady=5)
+start_button = ttk.Button(main_frame, text="Start Auto Update", command=start_auto_update)
+start_button.grid(row=9, column=1, pady=5, sticky="w")
+
+stop_button = ttk.Button(main_frame, text="Stop Auto Update", command=stop_auto_update)
+stop_button.grid(row=9, column=2, pady=5, sticky="w")
+
+countdown_label = ttk.Label(main_frame, text="Auto update stopped.")
+countdown_label.grid(row=10, column=0, columnspan=4, sticky="w")
+
+result_text = tk.Text(main_frame, height=10, width=80)
+result_text.grid(row=11, column=0, columnspan=4, pady=5, sticky="nsew")
 
 # Load configuration on startup
 load_config()
+refresh_cloudflare_status()
 
 root.mainloop()
